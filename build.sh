@@ -8,7 +8,7 @@ GPFS_GPL_PTF_RPM="gpfs.gpl-3.5.0-24.noarch.rpm"
 
 ## Samba Source Package. Change to point to the version you want to build
 
-SAMBA_SRPM="http://ftp.redhat.com/redhat/linux/enterprise/5Server/en/os/SRPMS/samba3x-3.6.23-12.el5_11.src.rpm"
+SAMBA_SRPM="http://ftp.redhat.com/redhat/linux/enterprise/5Server/en/os/SRPMS/samba3x-3.6.23-13.el5_11.src.rpm"
 
 ## Redhats RPM Signing key. You are unlikely to need to change this.
 

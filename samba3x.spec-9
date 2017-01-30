@@ -1,0 +1,1310 @@
+%define main_release 9
+
+%define samba_version 3.6.23
+%define cifs_version 5.5
+%define pre_release %nil
+
+%define tdb_version 1.2.6
+%define talloc_version 2.0.1
+%define tevent_version 0.9.18
+
+#%define samba_release 0%{pre_release}.%{main_release}%{?dist}
+%define samba_release %{main_release}%{?dist}
+
+%define enable_clustering 1
+%define real_name samba
+
+#only x86_64 has ctdb at the moment
+%ifnarch x86_64
+%define enable_clustering 0
+%endif
+
+%define samba_source source3
+Summary: Server and Client software to interoperate with Windows machines
+Name: samba3x
+Epoch: 0
+Version: %{samba_version}
+Release: %{samba_release}
+License: GPLv3+ and LGPLv3+
+Group: System Environment/Daemons
+URL: http://www.samba.org/
+
+Source: http://www.samba.org/samba/ftp/samba/samba-%{samba_version}%{pre_release}.tar.bz2
+Source500: cifs-utils-5.5.tar.bz2
+
+# Red Hat specific replacement-files
+Source1: samba.log
+Source2: samba.xinetd
+Source4: samba.sysconfig
+Source5: smb.init
+Source6: samba.pamd
+Source7: smbprint
+Source8: winbind.init
+Source9: smb.conf.default
+Source10: nmb.init
+Source11: pam_winbind.conf
+Source12: lgpl-3.0.txt
+
+# Don't depend on Net::LDAP
+Source999: filter-requires-samba.sh
+
+# Upstream patches
+Patch0:   samba-3.6.99-fix_group_expansion_in_service_path.patch
+Patch1:   samba-3.6.99-fix_setup_domain_child_logic.patch
+Patch2:   samba-3.6.99-fix_group_expansion_with_nss_templates.patch
+Patch3:   samba-3.6.99-add_timeout_option_to_smbclient.patch
+Patch4:   samba-3.6.99-fix_force_user_with_security_ads.patch
+Patch5:   samba-3.6.99-fix_memleak_in_printer_list.patch
+Patch6:   samba-3.6.99-fix_lookups_with_one_way_trusts.patch
+Patch7:   samba-3.6.99-fix_nbt_query_with_many_components.patch
+Patch8:   samba-3.6.99-add_spoolss_os_version.patch
+Patch9:   samba-3.6.99-fix_libads_krb5_ipv6.patch
+Patch10:  samba-3.6.99-fix_dropbox_share.patch
+
+# Additional Red Hat patches
+Patch100: samba-3.2.0pre1-pipedir.patch
+Patch101: samba-3.2.0pre1-grouppwd.patch
+Patch102: samba-3.2.5-inotify.patch
+Patch103: samba-3.5.11-idmapdebug.patch
+Patch104: samba-3.5.11-nss_info_doc.patch
+Patch105: samba-3.5.11-wbinfo_manpage.patch
+Patch106: samba-3.5.12-dns.patch
+Patch107: samba-3.5.12-pam_radio_type.patch
+Patch108: samba-CVE-2014-0244.patch
+Patch109: samba-CVE-2014-3493.patch
+Patch110: CVE-2015-0240-3.6.patch
+
+# This is a backported patch to use epoll on RHEL. We will maintain this
+# patch just in our package. It will not be part of a 3.6 release cause it requires
+# at least libtevent 0.9.18.
+Patch200: samba-3.6.x-winbind_tevent_poll.patch
+
+# Patches for cifs-utils
+Patch300: cifs-utils-5.5-bzero.patch
+Patch301: cifs-utils-5.5-fix_build_warnings.patch
+Patch302: cifs-utils-5.5-pie-relro.patch
+Patch303: cifs-utils-5.5-fix_autoconf.patch
+Patch304: cifs-utils-5.5-libcap.patch
+Patch305: cifs-utils-5.5-return_codes.patch
+
+Requires(pre): %{name}-common = %{epoch}:%{samba_version}-%{release}
+Requires: pam >= 0:0.64
+Requires: logrotate >= 0:3.4
+BuildRoot: %{_tmppath}/%{name}-%{samba_version}-%{release}-root
+Requires(post): /sbin/chkconfig, /sbin/service
+Requires(preun): /sbin/chkconfig, /sbin/service
+BuildRequires: pam-devel, readline-devel, ncurses-devel, libacl-devel, krb5-devel, openldap-devel, openssl-devel, cups-devel
+BuildRequires: autoconf, automake, gawk, gtk2-devel, libcap-devel, keyutils-libs-devel
+BuildRequires: libtalloc-devel >= %{talloc_version}
+BuildRequires: libtevent-devel >= %{tevent_version}
+BuildRequires: libtdb-devel >= %{tdb_version}
+%if %enable_clustering
+BuildRequires: ctdb-devel
+%endif
+Conflicts: samba < %{epoch}:%{samba_version}-%{release}
+Conflicts: samba-client < %{epoch}:%{samba_version}-%{release}
+Conflicts: samba-common < %{epoch}:%{samba_version}-%{release}
+Provides: samba = %{epoch}:%{samba_version}-%{release}
+
+# Working around perl dependency problem from docs
+%define __perl_requires %{SOURCE999}
+
+
+%description
+
+Samba is the suite of programs by which a lot of PC-related machines
+share files, printers, and other information (such as lists of
+available files and printers). The Windows NT, OS/2, and Linux
+operating systems support this natively, and add-on packages can
+enable the same thing for DOS, Windows, VMS, UNIX of all kinds, MVS,
+and more. This package provides an SMB/CIFS server that can be used to
+provide network services to SMB/CIFS clients.
+Samba uses NetBIOS over TCP/IP (NetBT) protocols and does NOT
+need the NetBEUI (Microsoft Raw NetBIOS frame) protocol.
+
+
+%package client
+Summary: Samba client programs
+Group: Applications/System
+Requires: %{name}-common = %{epoch}:%{samba_version}-%{release}
+Obsoletes: smbfs
+Conflicts: samba < %{epoch}:%{samba_version}-%{release}
+Conflicts: samba-client < %{epoch}:%{samba_version}-%{release}
+Provides: samba-client = %{epoch}:%{samba_version}-%{release}
+
+%description client
+The samba-client package provides some SMB/CIFS clients to complement
+the built-in SMB/CIFS filesystem in Linux. These clients allow access
+of SMB/CIFS shares and printing to SMB/CIFS printers.
+
+
+%package common
+Summary: Files used by both Samba servers and clients
+Requires: libtdb >= %{tdb_version}
+Requires: libtalloc >= %{talloc_version}
+Requires: libtevent >= %{tevent_version}
+Requires: %{name}-winbind = %{epoch}:%{samba_version}-%{release}
+Group: Applications/System
+Requires(pre): /usr/sbin/groupadd
+Requires(post): /sbin/chkconfig, /sbin/service, coreutils
+Requires(preun): /sbin/chkconfig, /sbin/service
+Conflicts: samba-common < %{epoch}:%{samba_version}-%{release}
+Conflicts: samba < %{epoch}:%{samba_version}-%{release}
+Conflicts: samba-client < %{epoch}:%{samba_version}-%{release}
+Provides: samba-common = %{epoch}:%{samba_version}-%{release}
+Requires: libsmbclient
+
+%description common
+Samba-common provides files necessary for both the server and client
+packages of Samba.
+
+
+%package winbind
+Summary: Samba winbind
+Group: Applications/System
+Requires: %{name}-common = %{epoch}:%{samba_version}-%{release}
+Requires(pre): /usr/sbin/groupadd
+Requires(post): /sbin/chkconfig, /sbin/service, coreutils
+Requires(preun): /sbin/chkconfig, /sbin/service
+Conflicts: samba-common < %{epoch}:%{samba_version}-%{release}
+
+%description winbind
+The samba-winbind package provides the winbind daemon, a NSS library, a PAM
+module and some client tools. Winbind enables Linux to be a full member in
+Windows domains and to use Windows user and group accounts on Linux.
+
+
+%package winbind-devel
+Summary: Developer tools for the winbind library
+Group: Development
+Requires: %{name}-winbind = %{epoch}:%{samba_version}-%{release}
+
+%description winbind-devel
+The samba-winbind package provides developer tools for the wbclient library.
+
+
+%package swat
+Summary: The Samba SMB server Web configuration program
+Group: Applications/System
+Requires: %{name} = %{epoch}:%{samba_version}-%{release}, xinetd
+Conflicts: samba-swat < %{epoch}:%{samba_version}-%{release}
+Provides: samba-swat = %{epoch}:%{samba_version}-%{release}
+
+%description swat
+The samba-swat package includes the new SWAT (Samba Web Administration
+Tool), for remotely managing Samba's smb.conf file using your favorite
+Web browser.
+
+
+%package doc
+Summary: Documentation for the Samba suite
+Group: Documentation
+Requires: %{name}-common = %{epoch}:%{samba_version}-%{release}
+Conflicts: samba < %{epoch}:%{samba_version}-%{release}
+
+%description doc
+The samba-doc package includes all the non-manpage documentation for the
+Samba suite.
+
+
+%package domainjoin-gui
+Summary: Domainjoin GUI
+Group: Applications/System
+Requires: %{name}-common = %{epoch}:%{samba_version}-%{release}, gtk2
+
+%description domainjoin-gui
+The samba-domainjoin-gui package includes a domainjoin gtk application.
+
+%prep
+# TAG: change for non-pre
+%setup -q -T -b 0  -n %{real_name}-%{samba_version}%{pre_release}
+%setup -T -D -a 500 -n %{real_name}-%{samba_version}%{pre_release} -q
+
+# copy Red Hat specific scripts
+mkdir packaging/Fedora
+cp packaging/RHEL/setup/smbusers packaging/Fedora/
+cp %{SOURCE5} packaging/Fedora/
+cp %{SOURCE6} packaging/Fedora/
+cp %{SOURCE7} packaging/Fedora/
+cp %{SOURCE8} packaging/Fedora/winbind.init
+cp %{SOURCE9} packaging/Fedora/
+cp %{SOURCE10} packaging/Fedora/
+cp %{SOURCE11} packaging/Fedora/
+cp %{SOURCE12} COPYING-LGPLv3
+
+# Upstream patches
+%patch0 -p1 -b .samba-3.6.99-fix_group_expansion_in_service_path.patch
+%patch1 -p1 -b .samba-3.6.99-fix_setup_domain_child_logic.patch
+%patch2 -p1 -b .samba-3.6.99-fix_group_expansion_with_nss_templates.patch
+%patch3 -p1 -b .samba-3.6.99-add_timeout_option_to_smbclient.patch
+%patch4 -p1 -b .samba-3.6.99-fix_force_user_with_security_ads.patch
+%patch5 -p1 -b .samba-3.6.99-fix_memleak_in_printer_list.patch
+%patch6 -p1 -b .samba-3.6.99-fix_lookups_with_one_way_trusts.patch
+%patch7 -p1 -b .samba-3.6.99-fix_nbt_query_with_many_components.patch
+%patch8 -p1 -b .samba-3.6.99-add_spoolss_os_version.patch
+%patch9 -p1 -b .samba-3.6.99-fix_libads_krb5_ipv6.patch
+%patch10 -p1 -b .samba-3.6.99-fix_dropbox_share.patch
+
+# Additional Red Hat patches
+%patch100 -p1 -b .samba-3.2.0pre1-pipedir.patch
+%patch101 -p1 -b .samba-3.2.0pre1-grouppwd.patch
+%patch102 -p1 -b .samba-3.2.5-inotify.patch
+%patch103 -p1 -b .samba-3.5.11-idmapdebug.patch
+%patch104 -p1 -b .samba-3.5.11-nss_info_doc.patch
+%patch105 -p1 -b .samba-3.5.11-wbinfo_manpage.patch
+%patch106 -p1 -b .samba-3.5.12-dns.patch
+%patch107 -p1 -b .samba-3.5.12-pam_radio_type.patch
+%patch108 -p1 -b .samba-CVE-2014-0244.patch
+%patch109 -p1 -b .samba-CVE-2014-3493.patch
+%patch110 -p1 -b .CVE-2015-0240-3.6.patch
+
+%patch200 -p1 -b .samba-3.6.x-winbind_tevent_poll.patch
+
+%patch300 -p1 -b .cifs-utils-5.5-bzero.patch
+%patch301 -p1 -b .cifs-utils-5.5-fix_build_warnings.patch
+%patch302 -p1 -b .cifs-utils-5.5-pie-relro.patch
+%patch303 -p1 -b .cifs-utils-5.5-fix_autoconf.patch
+%patch304 -p1 -b .cifs-utils-5.5-libcap.patch
+%patch305 -p1 -b .cifs-utils-5.5-return_codes.patch
+
+mv %samba_source/VERSION %samba_source/VERSION.orig
+sed -e 's/SAMBA_VERSION_VENDOR_SUFFIX=$/&\"%{samba_release}\"/' < %samba_source/VERSION.orig > %samba_source/VERSION
+pushd %{samba_source}
+script/mkversion.sh
+popd
+
+#Remove smbldap-tools, they are already packaged separately in Fedora
+rm -fr examples/LDAP/smbldap-tools-*/
+
+
+%build
+#pushd %{_sourcedir}/%{real_name}-%{samba_version}%{pre_release}/%samba_source
+pushd %{samba_source}
+
+sh autogen.sh
+%ifarch i386 sparc
+RPM_OPT_FLAGS="$RPM_OPT_FLAGS -D_FILE_OFFSET_BITS=64"
+%endif
+%ifarch ia64
+#libtoolize --copy --force     # get it to recognize IA-64
+#autoheader
+#autoconf
+EXTRA="-D_LARGEFILE64_SOURCE"
+%endif
+CONFIG_OPTS="\
+	--with-dnsupdate \
+	--with-ads \
+	--with-acl-support \
+	--with-automount \
+	--with-dnsupdate \
+	--with-libsmbsharemodes \
+	--with-mmap \
+	--with-pam \
+	--with-pam_smbpass \
+	--with-quotas \
+	--with-sendfile-support \
+	--with-syslog \
+	--with-utmp \
+	--with-vfs \
+	--with-winbind \
+	--without-smbwrapper \
+	--with-lockdir=/var/lib/samba \
+	--with-piddir=/var/run \
+	--with-mandir=%{_mandir} \
+	--with-privatedir=/var/lib/samba/private \
+	--with-logfilebase=/var/log/samba \
+	--with-libdir=%{_libdir} \
+	--with-modulesdir=%{_libdir}/samba \
+	--with-configdir=%{_sysconfdir}/samba \
+	--with-pammodulesdir=%{_lib}/security \
+	--with-swatdir=%{_datadir}/swat \
+	--with-shared-modules=idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2 \
+	--with-libtalloc=no \
+	--with-libtdb=no \
+	--enable-external-libtalloc=yes \
+	--enable-external-libtdb=yes \
+	--disable-fam
+"
+
+
+%if %enable_clustering
+	CONFIG_OPTS="$CONFIG_OPTS --with-cluster-support --enable-old-ctdb"
+%endif
+
+LDFLAGS="-Wl,--allow-shlib-undefined,--no-as-needed" \
+CFLAGS="$RPM_OPT_FLAGS -D_GNU_SOURCE -DLDAP_DEPRECATED -fno-strict-aliasing" %configure $CONFIG_OPTS \
+	--without-libsmbclient
+
+make samba3-idl
+
+make  pch
+
+make  LD_LIBRARY_PATH=$RPM_BUILD_DIR/%{real_name}-%{samba_version}/%samba_source/bin \
+    %{?_smp_mflags} \
+    all ../nsswitch/libnss_wins.so modules test_pam_modules test_nss_modules test_shlibs
+
+make  LD_LIBRARY_PATH=$RPM_BUILD_DIR/%{real_name}-%{samba_version}/%samba_source/bin \
+    %{?_smp_mflags} \
+    -C lib/netapi/examples
+
+make  debug2html smbfilter
+
+# Configure cifs utils
+popd
+pushd cifs-utils-%{cifs_version}
+autoreconf -f -i
+%configure --prefix=/usr --disable-cifsidmap --disable-cifsacl
+make %{?_smp_mflags}
+popd
+
+%install
+rm -rf $RPM_BUILD_ROOT
+
+mkdir -p $RPM_BUILD_ROOT/sbin
+mkdir -p $RPM_BUILD_ROOT/usr/{sbin,bin}
+mkdir -p $RPM_BUILD_ROOT/%{_initrddir}
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/{pam.d,logrotate.d,security}
+mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
+mkdir -p $RPM_BUILD_ROOT/var/lib/samba
+mkdir -p $RPM_BUILD_ROOT/var/lib/samba/private
+mkdir -p $RPM_BUILD_ROOT/var/lib/samba/winbindd_privileged
+mkdir -p $RPM_BUILD_ROOT/var/lib/samba/scripts
+mkdir -p $RPM_BUILD_ROOT/var/log/samba/old
+mkdir -p $RPM_BUILD_ROOT/var/spool/samba
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/swat/using_samba
+mkdir -p $RPM_BUILD_ROOT/var/run/winbindd
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/samba
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
+mkdir -p $RPM_BUILD_ROOT/%{_libdir} $RPM_BUILD_ROOT/%{_includedir}
+
+pushd %{samba_source}
+
+%makeinstall \
+	BINDIR=$RPM_BUILD_ROOT%{_bindir} \
+	BASEDIR=$RPM_BUILD_ROOT%{_prefix} \
+	SBINDIR=$RPM_BUILD_ROOT%{_sbindir} \
+	DATADIR=$RPM_BUILD_ROOT%{_datadir} \
+	LOCKDIR=$RPM_BUILD_ROOT/var/lib/samba \
+	PRIVATEDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba \
+	LIBDIR=$RPM_BUILD_ROOT%{_libdir}/ \
+	MODULESDIR=$RPM_BUILD_ROOT%{_libdir}/samba \
+	CONFIGDIR=$RPM_BUILD_ROOT%{_sysconfdir}/samba \
+	PAMMODULESDIR=$RPM_BUILD_ROOT/%{_lib}/security \
+	MANDIR=$RPM_BUILD_ROOT%{_mandir} \
+	VARDIR=$RPM_BUILD_ROOT/var/log/samba \
+	CODEPAGEDIR=$RPM_BUILD_ROOT%{_libdir}/samba \
+	SWATDIR=$RPM_BUILD_ROOT%{_datadir}/swat \
+	SAMBABOOK=$RPM_BUILD_ROOT%{_datadir}/swat/using_samba \
+	PIDDIR=$RPM_BUILD_ROOT/var/run
+
+popd
+
+# Install cifs utils
+pushd cifs-utils-%{cifs_version}
+make install DESTDIR=%{buildroot}
+popd
+
+# Install other stuff
+install -m644 packaging/Fedora/smb.conf.default $RPM_BUILD_ROOT%{_sysconfdir}/samba/smb.conf
+install -m755 %samba_source/script/mksmbpasswd.sh $RPM_BUILD_ROOT%{_bindir}
+install -m644 packaging/Fedora/smbusers $RPM_BUILD_ROOT%{_sysconfdir}/samba/smbusers
+install -m755 packaging/Fedora/smbprint $RPM_BUILD_ROOT%{_bindir}
+install -m755 packaging/Fedora/smb.init $RPM_BUILD_ROOT%{_initrddir}/smb
+install -m755 packaging/Fedora/nmb.init $RPM_BUILD_ROOT%{_initrddir}/nmb
+install -m755 packaging/Fedora/winbind.init $RPM_BUILD_ROOT%{_initrddir}/winbind
+install -m644 packaging/Fedora/pam_winbind.conf $RPM_BUILD_ROOT%{_sysconfdir}/security
+#ln -s ../..%{_initrddir}/smb  $RPM_BUILD_ROOT%{_sbindir}/samba
+install -m644 packaging/Fedora/samba.pamd $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/samba
+install -m644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/samba
+echo 127.0.0.1 localhost > $RPM_BUILD_ROOT%{_sysconfdir}/samba/lmhosts
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/openldap/schema
+install -m644 examples/LDAP/samba.schema $RPM_BUILD_ROOT%{_sysconfdir}/openldap/schema/samba.schema
+
+# winbind
+mkdir -p $RPM_BUILD_ROOT%{_libdir}
+install -m 755 nsswitch/libnss_winbind.so $RPM_BUILD_ROOT/%{_lib}/libnss_winbind.so.2
+ln -sf /%{_lib}/libnss_winbind.so.2  $RPM_BUILD_ROOT%{_libdir}/libnss_winbind.so
+install -m 755 nsswitch/libnss_wins.so $RPM_BUILD_ROOT/%{_lib}/libnss_wins.so.2
+ln -sf /%{_lib}/libnss_wins.so.2  $RPM_BUILD_ROOT%{_libdir}/libnss_wins.so
+
+# libraries {
+
+build_libdir="$RPM_BUILD_ROOT%{_libdir}"
+
+# make install puts libraries in the wrong place
+# (but at least gets the versioning right now)
+
+list="smbsharemodes netapi talloc tdb wbclient"
+#list="smbclient smbsharemodes netapi talloc tdb wbclient"
+for i in $list; do
+	install -m 644 %samba_source/pkgconfig/$i.pc $build_libdir/pkgconfig/ || true
+done
+
+
+/sbin/ldconfig -n $RPM_BUILD_ROOT%{_libdir}/
+
+# }
+
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+install -m644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/swat
+
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+install -m644 %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/samba
+
+install -m 755 %samba_source/lib/netapi/examples/bin/netdomjoin-gui $RPM_BUILD_ROOT/%{_sbindir}/netdomjoin-gui
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{real_name}
+install -m 644 %samba_source/lib/netapi/examples/netdomjoin-gui/samba.ico $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{real_name}/samba.ico
+install -m 644 %samba_source/lib/netapi/examples/netdomjoin-gui/logo.png $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{real_name}/logo.png
+install -m 644 %samba_source/lib/netapi/examples/netdomjoin-gui/logo-small.png $RPM_BUILD_ROOT/%{_datadir}/pixmaps/%{real_name}/logo-small.png
+
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man1/editreg.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/log2pcap.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/smbsh.1*
+#rm -f $RPM_BUILD_ROOT%{_mandir}/man1/smbget.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man5/smbgetrc.5*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/vfstest.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/testprns.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/smbmount.8*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/smbmnt.8*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/smbumount.8*
+
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/tdbbackup.8*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/tdbdump.8*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man8/tdbtool.8*
+
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbadd.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbdel.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbedit.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbmodify.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbsearch.1*
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/ldbrename.1*
+
+rm -f $RPM_BUILD_ROOT%{_includedir}/libsmbclient.h
+rm -f $RPM_BUILD_ROOT%{_includedir}/smb_share_modes.h
+rm -f $RPM_BUILD_ROOT%{_libdir}/libsmbclient.so*
+rm -f $RPM_BUILD_ROOT%{_libdir}/libsmbsharemodes.so*
+rm -f $RPM_BUILD_ROOT%{_libdir}/pkgconfig/smbsharemodes.pc
+rm -f $RPM_BUILD_ROOT%{_mandir}/man7/libsmbclient.7*
+
+rm -f %{buildroot}%{_bindir}/cifscreds
+rm -f %{buildroot}%{_mandir}/man1/cifscreds.1*
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+#%pre
+
+%post
+/sbin/chkconfig --add smb
+/sbin/chkconfig --add nmb
+if [ "$1" -ge "1" ]; then
+	/sbin/service smb condrestart >/dev/null 2>&1 || :
+	/sbin/service nmb condrestart >/dev/null 2>&1 || :
+fi
+exit 0
+
+%preun
+if [ $1 = 0 ] ; then
+    /sbin/service smb stop >/dev/null 2>&1 || :
+    /sbin/service nmb stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del smb
+    /sbin/chkconfig --del nmb
+fi
+exit 0
+
+#%postun
+
+
+%pre winbind
+/usr/sbin/groupadd -g 88 wbpriv >/dev/null 2>&1 || :
+
+%post winbind
+/sbin/chkconfig --add winbind
+
+if [ "$1" -ge "1" ]; then
+	/sbin/service winbind condrestart >/dev/null 2>&1 || :
+fi
+
+%post common
+/sbin/ldconfig
+
+###############################################################################
+## We have new default since F-8, time to stop checking for old files are there
+## should be none in any support upgrade case
+## (keeping it commented just for reference for a while
+## 
+## # This script must be run always on installs or upgrades
+## # it checks if a previous installation have created files
+## # under /var/cache/samba and move them in that case as the
+## # new package wants them to be under /var/lib/samba for
+## # FHS compliance
+## #
+## # - we must stop the dameon if running and restart it
+## #   after the script if it was
+## # - we do not overwrite newer files
+## # - even if /etc/init.d/smb is in samba and not
+## #   samba-common we need to stop smbd/nmbd, if they
+## #   are running, here as well, or we will mess up
+## #   shared (between winbindd and smbd/nmbd) tdbs
+## 
+## OLDPATH="/var/cache/samba"
+## NEWPATH="/var/lib/samba"
+## 
+## eval ls $OLDPATH/*.tdb >/dev/null 2>&1
+## if [ $? = 0 ]; then
+##     eval testparm -s 2>/dev/null |grep "lock dir" >/dev/null
+##     if [ $? = 0 ]; then 
+## 	echo "Warning: lock dir explicitly set. Not moving tdb files to new default location"
+##     else
+## 
+## 	#Stop daemons before we move the files around
+## 
+## 	#this is what condrestart checks as well
+## 	if [ -f /var/lock/subsys/winbindd ]; then
+## 		/sbin/service winbind stop >/dev/null 2>&1 || :
+## 		# Use a dirty trick to fool condrestart later
+## 		touch /var/lock/subsys/winbindd
+## 	fi
+## 
+## 	if [ -f /var/lock/subsys/smb ]; then
+## 		/sbin/service smb stop >/dev/null 2>&1 || :
+## 		# We need to stop smbd here as we are moving also smbd owned files
+## 		# but we can't restart it until the new server is installed.
+## 		# Use a dirty trick to fool condrestart later
+## 		touch /var/lock/subsys/smb
+## 	fi
+## 
+## 	if [ -f /var/lock/subsys/nmb ]; then
+## 		/sbin/service nmb stop >/dev/null 2>&1 || :
+## 		# We need to stop smbd here as we are moving also smbd owned files
+## 		# but we can't restart it until the new server is installed.
+## 		# Use a dirty trick to fool condrestart later
+## 		touch /var/lock/subsys/nmb
+## 	fi
+## 
+## 	eval ls $NEWPATH/*.tdb >/dev/null 2>&1
+## 	if [ $? = 0 ]; then
+## 		#something strange here, lets backup this stuff and avoid just wiping it
+## 
+## 		mkdir $NEWPATH.pkgbkp
+## 		mv -f $NEWPATH/*.tdb $NEWPATH.pkgbkp/ >/dev/null 2>&1
+## 		mv -f $NEWPATH/*.dat $NEWPATH.pkgbkp/ >/dev/null 2>&1
+## 		mv -f $NEWPATH/perfmon $NEWPATH.pkgbkp/ >/dev/null 2>&1
+## 		mv -f $NEWPATH/printing $NEWPATH.pkgbkp/ >/dev/null 2>&1
+## 	fi
+## 
+## 	mv -f $OLDPATH/*.tdb $NEWPATH/ >/dev/null 2>&1
+## 	mv -f $OLDPATH/*.dat $NEWPATH/ >/dev/null 2>&1
+## 	mv -f $OLDPATH/perfmon $NEWPATH/ >/dev/null 2>&1
+## 	mv -f $OLDPATH/printing $NEWPATH/ >/dev/null 2>&1
+## 
+##     fi
+## fi
+## 
+## # We also moved private files from /etc/samba to
+## # /var/lib/samba/private so we need to migrate these as well
+## 
+## #secrets.tdb
+## if [ -f %{_sysconfdir}/samba/secrets.tdb ]; then
+## 	eval testparm -s 2>/dev/null |grep "private dir" >/dev/null
+## 	if [ $? = 0 ]; then
+## 		echo "Warning: private dir explicitly set. Not moving secrets.tdb to new default location"
+## 	else
+## 		if [ -f /var/lib/samba/private/secrets.tdb ]; then
+## 			mv -f /var/lib/samba/private/secrets.tdb /var/lib/samba/private/secrets.tdb.old
+## 		fi
+## 		mv -f %{_sysconfdir}/samba/secrets.tdb /var/lib/samba/private/secrets.tdb
+## 	fi
+## fi
+## 
+## #smbpasswd
+## if [ -f %{_sysconfdir}/samba/smbpasswd ]; then
+## 	eval testparm -s 2>/dev/null |grep "smb passwd file" >/dev/null
+## 	if [ $? = 0 ]; then
+## 		echo "Warning: smbpasswd file location explicitly set. Not moving smbpasswd to new default location"
+## 	else
+## 		if [ -f /var/lib/samba/private/smbpasswd ]; then
+## 			mv -f /var/lib/samba/private/smbpasswd /var/lib/samba/private/smbpasswd.old
+## 		fi
+## 		mv -f %{_sysconfdir}/samba/smbpasswd /var/lib/samba/private/smbpasswd
+## 	fi
+## fi
+## 
+## #passdb.tdb
+## if [ -f %{_sysconfdir}/samba/passdb.tdb ]; then
+## 	eval testparm -s 2>/dev/null |grep "private dir" >/dev/null || testparm -s 2>/dev/null |grep -P "^\s*passdb\s*backend\s*=.*tdbsam:/etc/samba/passdb.tdb.*"
+## 	if [ $? = 0 ]; then
+## 		echo "Warning: passdb.tdb location explicitly set. Not moving passdb.tdb to new default location"
+## 	else
+## 		if [ -f /var/lib/samba/private/passdb.tdb ]; then
+## 			mv -f /var/lib/samba/private/passdb.tdb /var/lib/samba/private/passdb.tdb.old
+## 		fi
+## 		mv -f %{_sysconfdir}/samba/passdb.tdb /var/lib/samba/private/passdb.tdb
+## 	fi
+## fi
+## 
+## #remove schannel_store if existing, it is not info we need to keep across restarts
+## if [ -f %{_sysconfdir}/samba/schannel_store.tdb ]; then
+## 	rm -f %{_sysconfdir}/samba/schannel_store.tdb
+## fi
+## 
+%preun winbind
+if [ $1 = 0 ] ; then
+    /sbin/service winbind stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del winbind
+fi
+exit 0
+
+%postun common
+/sbin/ldconfig
+
+%files
+%defattr(-,root,root)
+%{_sbindir}/smbd
+%{_sbindir}/nmbd
+%{_bindir}/mksmbpasswd.sh
+%{_bindir}/smbstatus
+%{_bindir}/eventlogadm
+%config(noreplace) %{_sysconfdir}/samba/smbusers
+%attr(755,root,root) %{_initrddir}/smb
+%attr(755,root,root) %{_initrddir}/nmb
+%config(noreplace) %{_sysconfdir}/logrotate.d/samba
+%config(noreplace) %{_sysconfdir}/pam.d/samba
+%{_mandir}/man7/samba.7*
+%{_mandir}/man8/nmbd.8*
+%{_mandir}/man8/smbd.8*
+%{_mandir}/man8/eventlogadm.8*
+%{_mandir}/man8/vfs_*.8*
+%{_libdir}/samba/vfs
+%{_libdir}/samba/auth
+%{_libdir}/samba/charset
+%attr(1777,root,root) %dir /var/spool/samba
+%dir %{_sysconfdir}/openldap/schema
+%{_sysconfdir}/openldap/schema/samba.schema
+
+%doc examples/autofs examples/LDAP examples/libsmbclient examples/misc examples/printer-accounting
+%doc examples/printing
+
+%files swat
+%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/xinetd.d/swat
+%{_datadir}/swat
+%{_sbindir}/swat
+%{_mandir}/man8/swat.8*
+%attr(755,root,root) %{_libdir}/samba/*.msg
+
+%files client
+%defattr(-,root,root)
+/sbin/mount.cifs
+%{_bindir}/rpcclient
+%{_bindir}/smbcacls
+%{_bindir}/findsmb
+%{_bindir}/smbget
+%{_bindir}/nmblookup
+%{_bindir}/smbclient
+%{_bindir}/smbprint
+%{_bindir}/smbspool
+%{_bindir}/smbta-util
+%{_bindir}/smbtar
+%{_bindir}/smbtree
+%{_bindir}/sharesec
+%{_sbindir}/cifs.upcall
+%{_mandir}/man1/findsmb.1*
+%{_mandir}/man1/nmblookup.1*
+%{_mandir}/man1/rpcclient.1*
+%{_mandir}/man1/smbcacls.1*
+%{_mandir}/man1/smbclient.1*
+%{_mandir}/man1/smbtar.1*
+%{_mandir}/man1/smbtree.1*
+%{_mandir}/man1/smbget.1*
+%{_mandir}/man1/sharesec.1*
+%{_mandir}/man8/cifs.upcall.8*
+%{_mandir}/man8/mount.cifs.8*
+%{_mandir}/man8/smbspool.8*
+%{_mandir}/man8/smbta-util.8*
+
+%files common
+%defattr(-,root,root)
+%attr(755,root,root) /%{_lib}/security/pam_smbpass.so
+%dir %{_libdir}/samba
+%{_libdir}/samba/lowcase.dat
+%{_libdir}/samba/upcase.dat
+%{_libdir}/samba/valid.dat
+%{_libdir}/libnss_wins.so
+/%{_lib}/libnss_wins.so.2
+%{_libdir}/libnetapi.so
+%attr(755,root,root) %{_libdir}/libnetapi.so.*
+%{_includedir}/netapi.h
+%{_libdir}/pkgconfig/netapi.pc
+%{_bindir}/net
+%{_bindir}/testparm
+%{_bindir}/smbpasswd
+%{_bindir}/pdbedit
+%{_bindir}/profiles
+%{_bindir}/smbcquotas
+%{_bindir}/smbcontrol
+%dir /var/lib/samba
+%attr(700,root,root) %dir /var/lib/samba/private
+%dir /var/lib/samba/scripts
+%config(noreplace) %{_sysconfdir}/samba/smb.conf
+%config(noreplace) %{_sysconfdir}/samba/lmhosts
+%config(noreplace) %{_sysconfdir}/sysconfig/samba
+%dir %{_sysconfdir}/samba
+%attr(0700,root,root) %dir /var/log/samba
+%attr(0700,root,root) %dir /var/log/samba/old
+%{_mandir}/man1/dbwrap_tool.1*
+%{_mandir}/man1/profiles.1*
+%{_mandir}/man1/smbcquotas.1*
+%{_mandir}/man1/smbcontrol.1*
+#%{_mandir}/man1/vfstest.1*
+%{_mandir}/man1/testparm.1*
+%{_mandir}/man1/smbstatus.1*
+%{_mandir}/man5/smbpasswd.5*
+%{_mandir}/man5/smb.conf.5*
+%{_mandir}/man5/lmhosts.5*
+%{_mandir}/man8/smbpasswd.8*
+%{_mandir}/man8/pdbedit.8*
+%{_mandir}/man8/net.8*
+%{_datadir}/locale/*/LC_MESSAGES/net.mo
+
+%doc README COPYING Manifest 
+%doc WHATSNEW.txt Roadmap
+
+%files winbind
+%defattr(-,root,root)
+%{_bindir}/ntlm_auth
+%{_bindir}/wbinfo
+%{_libdir}/libnss_winbind.so
+%attr(755,root,root) %{_libdir}/libwbclient.so.*
+%{_libdir}/samba/idmap
+%{_libdir}/samba/nss_info
+/%{_lib}/libnss_winbind.so.2
+/%{_lib}/security/pam_winbind.so
+%{_sbindir}/winbindd
+%dir /var/run/winbindd
+%attr(750,root,wbpriv) %dir /var/lib/samba/winbindd_privileged
+%config(noreplace) %{_sysconfdir}/security/pam_winbind.conf
+%{_initrddir}/winbind
+%{_mandir}/man1/ntlm_auth.1*
+%{_mandir}/man1/wbinfo.1*
+%{_mandir}/man8/pam_winbind.8*
+%{_mandir}/man5/pam_winbind.conf.5*
+%{_mandir}/man7/winbind_krb5_locator.7*
+%{_mandir}/man8/winbindd.8*
+%{_mandir}/man8/idmap_*.8*
+%{_datadir}/locale/*/LC_MESSAGES/pam_winbind.mo
+
+%files winbind-devel
+%defattr(-,root,root)
+%{_includedir}/wbclient.h
+%{_libdir}/libwbclient.so
+%{_libdir}/pkgconfig/wbclient.pc
+
+%files doc
+%defattr(-,root,root)
+%doc docs/Samba3-Developers-Guide.pdf docs/Samba3-ByExample.pdf
+%doc docs/Samba3-HOWTO.pdf
+%doc docs/htmldocs
+
+%files domainjoin-gui
+%defattr(-,root,root)
+%{_sbindir}/netdomjoin-gui
+%dir %{_datadir}/pixmaps/samba
+%{_datadir}/pixmaps/samba/samba.ico
+%{_datadir}/pixmaps/samba/logo.png
+%{_datadir}/pixmaps/samba/logo-small.png
+
+%changelog
+* Mon Feb 16 2015 Andreas Schneider <asn@redhat.com> - 3.6.23-9
+- related: #1191608 - Update patchset for CVE-2015-0240.
+
+* Thu Feb 12 2015 Andreas Schneider <asn@redhat.com> - 3.6.23-8
+- resolves: #1191608 - CVE-2015-0240: RCE in netlogon.
+
+* Thu Aug 21 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-7
+- resolves: #1132425 - Fix dropbox share.
+
+* Tue Jul 08 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-6
+- resolves: #1110729 - Fix write operations as guest with 'security = share'.
+
+* Wed Jun 11 2014 - Guenther Deschner <gdeschner@redhat.com> - 3.6.23-5
+- resolves: #1112151 - CVE-2014-0244: DoS in nmbd.
+- resolves: #1112151 - CVE-2014-3493: DoS in smbd with unicode path names.
+
+* Wed Jun 04 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-4
+- resolves: #1099439 - 'net ads testjoin' fails with IPv6.
+
+* Mon Jun 02 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-3
+- resolves: #1100658 - Allocate the server_info on the correct context.
+- resolves: #1101922 - Add config variables to set spoolss os version.
+
+* Thu Mar 20 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-2
+- resolves: #1066533 - Fix nbt query with many components.
+
+* Tue Mar 11 2014 - Andreas Schneider <asn@redhat.com> - 3.6.23-1
+- resolves: #1073352 - Fix CVE-2013-4496 and CVE-2012-6150.
+
+* Mon Mar 03 2014 - Andreas Schneider <asn@redhat.com> - 3.6.22-2
+- related: #976637 - More cleanup for 'force user' with 'security = ads'.
+- resolves: #1069571 - Fix memory leak reading printer list.
+- resolves: #1067608 - Fix wbinfo -i with one-way trusts.
+
+* Mon Feb 10 2014 - Andreas Schneider <asn@redhat.com> - 3.6.22-0.1
+- resolves: #1035006 - Rebase Samba to 3.6.22.
+- resolves: #1034161 - Do not build Samba with fam support:
+- resolves: #1033773 - Fix AD group lookups with non-utf8 locale settings.
+- resolves: #1026796 - Fix connect to samba share from Mac Finder.
+- resolves: #996656 - Fix printing failing in function cups_job_submit.
+- resolves: #991528 - Fix Windows 8 Roaming profiles.
+- resolves: #989894 - Fix net ads join segmentation fault.
+- resolves: #981369 - Fix winbind which does not update information in cache
+                      about a group from a trusted domain even after the
+                      information has expired.
+- resolves: #1040475 - Fix group expansion in service path.
+- resolves: #1050889 - Fix 100% CPU utilization in winbindd when trying to
+                       free memory in winbindd_reinit_after_fork.
+- resolves: #1063694 - Fix %G substitution in 'template homedir'.
+- resolves: #1037273 - Add timeout option to smbclient.
+- resolves: #976637 - Fix 'force user' with 'security = ads'.
+
+* Mon Nov 25 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.138
+- resolves: #1018036 - CVE-2013-4408.
+
+* Fri Nov 08 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.137
+- resolves: #1028089 - CVE-2013-4475.
+
+* Tue Aug 06 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.136
+- resolves: #984807 - CVE-2013-4124: DoS via integer overflow when reading
+                      an EA list
+
+* Tue Jul 09 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.135
+- Fix PIDL parsing with newer versions of gcc.
+- Fix dereferencing a unique pointer in the WKSSVC server.
+- resolves: #982484
+
+* Mon Jun 17 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.134
+- Check for system libtevent and require version 0.9.18.
+- Use tevent epoll backend in winbind.
+- resolves: #869295
+
+* Thu May 23 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.133
+- Fix smbstatus code dump when a file entry has delete tokens.
+- resolves: #962840
+
+* Tue May 07 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.132
+- Fix possible segfaults with group caching patch.
+- related: #948923
+
+* Mon May 06 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.131
+- Fix CVE-2013-0213 and CVE-2013-0214.
+- resolves: #957591
+
+* Wed Apr 17 2013 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.130
+- Fix netlogon failover for LogonSamLogon.
+- resolves: #862872
+- Fix write operations as guest with security = share
+- resolves: #905071
+- Disable building cifs idmap and acl binaries.
+- resolves: #873692
+- Change chkconfig order to start winbind before netfs.
+- resolves: #948614
+- Fix cache issue when resoliving groups without domain name.
+- resolves: #948923
+- Fix pam_winbind upn to username conversion if you have different seperator.
+- resolves: #949611
+- Fix the username map optimization.
+- resolves: #917564
+- Fix leaking sockets of smb dc connection.
+- resolves: #883861
+- Fix 'net ads keytab add' not respecting the case.
+- resolves: #955680
+- Fix 'map untrusted to domain' with NTLMv2.
+- resolves: #947999
+
+* Mon Oct 29 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.129
+- Fix parsing of invalid SMB2 create blob which can cause smbd crash.
+- resolves: #870980
+
+* Mon Oct 08 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.128
+- Fix loading the imap hash module.
+- resolves: #863192
+- Fix raw printing support.
+- related: #855312
+
+* Fri Oct 05 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.127
+- ACL masks incorrectly applied when setting ACLs.
+- resolves: #863127
+
+* Mon Oct 01 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.126
+- Fix client timeouts during printer imports.
+- resolves: #860024
+
+* Thu Sep 27 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.125
+- Handle error if invalid ports have been specified gracefully.
+- resolves: #845761
+- Fix printing regression with builtin forms.
+- resolves: #860965
+
+* Wed Sep 19 2012 - Guenther Deschner <gdeschner@redhat.com> - 3.6.6-0.124
+- Fix pam_winbind return code in error path
+- resolves: #859390
+
+* Tue Sep 18 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.123
+- Fix rap printing access to spoolss (smbclient print queue access).
+- resolves: #855312
+- Fix mount.cifs return codes.
+- resolves: #856168
+
+* Mon Sep 10 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.122
+- Fix winbind daemon crash looking up a user on a disconnected trusted domain.
+- resolves: #855831
+
+* Mon Sep 10 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.121
+- Fix return value of libcap toggle_dac_capability from cifs-utils.
+- resolves: #855366
+
+* Tue Sep 04 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.120
+- Fix ndr problem in the printing torture test.
+- related: #838892
+
+* Thu Aug 30 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.119
+- Fix initialization of the printing backend and printer migration.
+- resolves: #853012
+
+* Wed Aug 22 2012 - Andreas Schneider <asn@redhat.com> - 3.6.6-0.118
+- Fix regression in package requires and conflicts with samba (3.0) package.
+- related: #802546
+
+* Wed Aug 22 2012 Guenther Deschner <gdeschner@redhat.com> - 3.6.6-0.117
+- Disable PAM_RADIO_TYPE handling in pam_winbind
+- resolves: #842350
+
+* Thu Jul 19 2012 Andreas Schneider <asn@redhat.com> - 3.6.6-0.116
+- Fix resolving Domain Local groups.
+- resolves: #828113
+- resolves: #830944
+
+* Tue Jul 10 2012 Guenther Deschner <gdeschner@redhat.com> - 3.6.6-0.115
+- Fix printing tdb upgrade for 3.6.6
+- resolves: #838892
+
+* Mon Jul 09 2012 Andreas Schneider <asn@redhat.com> - 3.6.6-0.114
+- Add autoreconf to build cifs-utils with updated Makefiles.
+- resolves: #803457
+
+* Mon Jul 09 2012 Andreas Schneider <asn@redhat.com> - 3.6.6-0.113
+- Fix building cifs-utils with -pie and -relro.
+- resolves: #803457
+
+* Fri Jul 06 2012 Andreas Schneider <asn@redhat.com> - 3.6.6-0.112
+- Fix building with libtdb 1.2.10.
+- resolves: #803457
+
+* Wed Jul 04 2012 Andreas Schneider <asn@redhat.com> - 3.6.6-0.111
+- Rebase to version 3.6.6.
+- resolves: #803457
+
+* Fri Jun 01 2012 Andreas Schneider <asn@redhat.com> - 3.5.10-0.110
+- Fix package requires and conflicts with samba (3.0) package.
+- resolves: #802546
+
+* Wed Apr 25 2012 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.109
+- Security Release, fixes CVE-2012-2111
+- resolves: #815687
+
+* Tue Mar 20 2012 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.108
+- Security Release, fixes CVE-2012-1182
+- resolves: #804652
+
+* Thu Jan 05 2012 Andreas Schneider <asn@redhat.com> - 3.5.10-0.107
+- Fix possible segfault in winbind getpwent patch.
+- related: #753828
+
+* Tue Jan 03 2012 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.106
+- Document -k option in the 'net' manpage
+- resolves: #771375
+
+* Wed Dec 21 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.105
+- Fix potentially wrong DNS SRV queries
+- resolves: #754154
+
+* Mon Dec 19 2011 - Andreas Schneider <asn@redhat.com> - 3.5.10-0.104
+- Add timeout to winbind cache entries.
+- resolves: #766497
+
+* Thu Dec 15 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.102
+- Fix smbclient return code, add one missing hunk.
+- related: #755346
+
+* Wed Dec 07 2011 Andreas Schneider <asn@redhat.com> - 3.5.10-0.101
+- Fix mount.cifs missing documentation.
+- resolves: #711460
+
+* Mon Dec 05 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.100
+- Fix smbclient return code
+- resolves: #755346
+
+* Fri Nov 25 2011 Andreas Schneider <asn@redhat.com> - 3.5.10-0.99
+- Fix winbind pwent enumeration
+- resolves: #753828
+
+* Tue Oct 25 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.98
+- Fix wbinfo manpage (--group-info)
+- resolves: #747664
+
+* Tue Oct 25 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.97
+- Fix AD LDAP schema "primaryGroupID" usage documentation
+- resolves: #747153
+
+* Tue Oct 25 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.96
+- Fix winbindd manpage (remove -Y option)
+- resolves: #748517
+
+* Mon Oct 24 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.95
+- Fix DFS breaks zip file extracting unless "follow symlinks = no" set
+- resolves: #748515
+
+* Tue Oct 18 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.94
+- Fix "force create mode" regression
+- resolves: #743467
+
+* Mon Oct 10 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.93
+- Fix IE9 on Windows 7 download to samba share
+- resolves: #743895
+
+* Tue Oct 04 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.92
+- Fix winbind lookup rid
+- resolves: #735165
+
+* Fri Sep 30 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.91
+- Fix wbinfo manpage
+- resolves: #711466
+
+* Thu Sep 29 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.10-0.90
+- Rebase to 3.5.10
+- resolves: #719369
+
+* Wed Sep 28 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.89
+- Fix idmap initialization debug message
+- resolves: #736375
+
+* Tue Sep 20 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.88
+- Silence strict aliasing warning
+- resolves: #711122
+
+* Mon Sep 19 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.87
+- Fix cleartext authentication after applying Windows security patch KB2536276
+- resolves: #716182
+
+* Mon Sep 19 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.86
+- Fix winbind FD leak
+- resolves: #725875
+
+* Mon Sep 12 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.85
+- Fix SPNEGO parsing for large buffers
+- resolves: #719852
+
+* Mon Jul 25 2011 Simo Sorce <ssorce@redhat.com> 3.5.4-0.84
+- Security Release, fixes CVE-2011-2694, CVE-2011-2522, CVE-2011-1678,
+  CVE-2011-2724
+- resolves: #722556
+
+* Wed Jun 29 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.83
+- Fix support for old samba 3.0 domain controllers
+- resolves: #716961
+
+* Tue Jun 28 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.82
+- Fix debug statement in printcap patch
+- related: #701975
+
+* Wed Jun 15 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.81
+- Fix joining principal
+- resolves: #713552
+
+* Fri May 27 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.80
+- Fix spoolss form index mixup (wrong papersize)
+- related: #698400
+
+* Mon May 23 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.79
+- Fix printcap handling and cups spooler interaction
+- resolves: #701975
+
+* Thu May 12 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.78
+- Fix winbind getgrent crash
+- resolves: #704279
+
+* Wed May 11 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.77
+- Fix cups location publishing
+- resolves: #702039
+
+* Tue May 10 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.76
+- Fix server principal name guessing
+- resolves: #701661
+
+* Wed May 04 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.75
+- Fix spoolss marshalling
+- resolves: #698400
+
+* Fri Apr 08 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.74
+- Fix lsa lookupsids calls over ncacn_ip_tcp that caused getent passwd queries
+  to fail
+- resolves: #679066
+
+* Thu Mar 24 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.73
+- Fix smbd changing mode of files after rename
+- resolves: #661311
+
+* Thu Mar 03 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.72
+- Document all wbinfo paramters
+- resolves: #679086
+
+* Mon Feb 21 2011 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.71
+- Security Release, fixes CVE-2011-0719
+- resolves: #678333
+
+* Tue Nov 16 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.70
+- Fix SPNEGO parsing for Windows 7
+- resolves: #651722
+
+* Thu Nov 04 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.69
+- Fix charset handling
+- resolves: #649708
+
+* Mon Oct 25 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.68
+- Re-enable ability to do user mounts with mount.cifs
+- resolves: #645886
+
+* Fri Oct 22 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.67
+- Add "winbind max clients" configure option
+- resolves: #641379
+
+* Thu Oct 14 2010 Simo Sorce <ssorce@redhat.com> - 3.5.4-0.66
+- Fix incorrect buildrequires
+- resolves: #643041
+
+* Thu Sep 09 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.65
+- Security Release, fixes CVE-2010-3069
+- resolves: #632232
+
+* Thu Sep 02 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.64
+- Fix incorrect build of umount.cifs
+- related: #459842
+
+* Wed Sep 01 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.63
+- Make sure samba3x provides samba and also versions the conflicts
+- resolves: #582756
+- resolves: #609578
+
+* Wed Sep 01 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.62
+- Further fixes for winbind secure channel
+- related: #590766
+
+* Mon Aug 23 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.61
+- Fix version dependencies to libtdb and libtalloc
+- related: #596886
+- related: #596883
+
+* Fri Aug 20 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.60
+- Fix winbind offline mode
+- resolves: #604081
+
+* Tue Aug 10 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.59
+- Fix winbind secure channel (samlogonex)
+- resolves: #590766
+
+* Mon Aug 09 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.58
+- Use system libtdb and libtalloc
+- related: #596886
+- related: #596883
+
+* Thu Jul 15 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.57
+- Stop building libtdb
+- resolves: #596886
+- Stop building libtalloc
+- resolves: #596883
+
+* Wed Jul 14 2010 Guenther Deschner <gdeschner@redhat.com> - 3.5.4-0.56
+- Rebase to 3.5.4
+- related: #459842
+
+* Wed Jun 30 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.12-0.55
+- Fix "default case" manpage entry
+- resolves: #480405
+
+* Thu Jun 10 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.12-0.54
+- Security Release, fixes CVE-2010-2063
+- resolves: #602323
+
+* Wed Jun 09 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.12-0.53
+- Fix realm for trusted domains
+- resolves: #560239
+
+* Tue Jun 08 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.12-0.52
+- Rebase to 3.3.12
+- resolves: #459842
+
+* Wed Mar 10 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.51
+- Fix panics when using "Add Printer Wizard"
+- resolves: #571778
+
+* Wed Jan 20 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.50
+- Remove 3.0.x libsmbclient
+- resolves: #520466
+
+* Fri Jan 08 2010 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.49
+- Fix "dos filemode = yes" support
+- resolves: #537165
+
+* Tue Dec 22 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.48
+- Update cifs.upcall to upstream version
+- resolves: #548129
+
+* Fri Dec 11 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.47
+- Make it possible to build samba3x without clustering support
+- resolves: #547715
+
+* Tue Nov 10 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.46
+- Fix uninitialized variables in rpc_client code
+- related: #527997
+
+* Thu Oct 08 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.8-0.45
+- Update to 3.3.8 and add various fixes for Windows 2008 and Windows 7
+- resolves: #527997
+
+* Thu Oct 01 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.43
+- Security Release, fixes CVE-2009-1888, CVE-2009-2813, CVE-2009-2948 and CVE-2009-2906
+- resolves: #526663
+
+* Thu Sep 03 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.42
+- Add appropriate licensing information to samba3-common, libsmbclient, libtalloc,
+  libtdb and tdb-tools
+- resolves: #520652
+
+* Tue Aug 04 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.41
+- Fix samr access rights for winbind clients
+- related: #506292
+
+* Fri Jun 19 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.40
+- Fix password expiry calculation in pam_winbind
+- Remove popt dependency from mount/umount.cifs
+- Fix libsmbclient packaging
+- resolves: #506932
+
+* Thu Jun 18 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.39
+- remove unused swat.desktop
+- related: #506292
+
+* Tue Jun 16 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.5-0.38
+- Update to 3.3.5
+- resolves: #506292
+
+* Tue May 26 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.4-0.37
+- Convert obsolete tags into conflict tags
+- Various specfile dependency fixes
+- resolves: #502480
+
+* Wed May 20 2009 Guenther Deschner <gdeschner@redhat.com> - 3.3.4-0.34
+- Add new package samba3x
+- Fix various Requires and Provides tags in order to meet conflict and update
+  requirements
+- resolves: #454460

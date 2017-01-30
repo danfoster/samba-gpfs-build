@@ -1,0 +1,525 @@
+[2016/04/14 18:08:36.973297,  5] lib/util_sock.c:165(print_socket_options)
+  Socket options:
+  	SO_KEEPALIVE = 1
+  	SO_REUSEADDR = 1
+  	SO_BROADCAST = 0
+  	TCP_NODELAY = 1
+  	TCP_KEEPCNT = 9
+  	TCP_KEEPIDLE = 7200
+  	TCP_KEEPINTVL = 75
+  	IPTOS_LOWDELAY = 0
+  	IPTOS_THROUGHPUT = 0
+  	SO_SNDBUF = 50652
+  	SO_RCVBUF = 87456
+  	SO_SNDLOWAT = 1
+  	SO_RCVLOWAT = 1
+  	SO_SNDTIMEO = 0
+  	SO_RCVTIMEO = 0
+  	TCP_QUICKACK = 1
+[2016/04/14 18:08:36.973480,  5] lib/util_sock.c:165(print_socket_options)
+  Socket options:
+  	SO_KEEPALIVE = 1
+  	SO_REUSEADDR = 1
+  	SO_BROADCAST = 0
+  	TCP_NODELAY = 1
+  	TCP_KEEPCNT = 9
+  	TCP_KEEPIDLE = 7200
+  	TCP_KEEPINTVL = 75
+  	IPTOS_LOWDELAY = 0
+  	IPTOS_THROUGHPUT = 0
+  	SO_SNDBUF = 50652
+  	SO_RCVBUF = 87456
+  	SO_SNDLOWAT = 1
+  	SO_RCVLOWAT = 1
+  	SO_SNDTIMEO = 0
+  	SO_RCVTIMEO = 0
+  	TCP_QUICKACK = 1
+[2016/04/14 18:08:36.973654,  3] lib/access.c:338(allow_access)
+  Allowed connection from 127.0.0.1 (127.0.0.1)
+[2016/04/14 18:08:36.973684,  3] smbd/oplock.c:922(init_oplocks)
+  init_oplocks: initializing messages.
+[2016/04/14 18:08:36.973783,  3] smbd/oplock_linux.c:246(linux_init_kernel_oplocks)
+  Linux kernel oplocks enabled
+[2016/04/14 18:08:36.973811,  5] lib/messages.c:332(messaging_deregister)
+  Deregistering messaging pointer for type 1 - private_data=(nil)
+[2016/04/14 18:08:36.973980,  3] smbd/process.c:1609(process_smb)
+  Transaction 0 of length 194 (0 toread)
+[2016/04/14 18:08:36.974003,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.974013,  5] lib/util.c:342(show_msg)
+  size=190
+  smb_com=0x72
+  smb_rcls=0
+  smb_reh=0
+  smb_err=0
+  smb_flg=8
+  smb_flg2=51201
+  smb_tid=0
+  smb_pid=601
+  smb_uid=0
+  smb_mid=1
+  smt_wct=0
+  smb_bcc=155
+[2016/04/14 18:08:36.974093,  3] smbd/process.c:1414(switch_message)
+  switch message SMBnegprot (pid 602) conn 0x0
+[2016/04/14 18:08:36.974113,  4] smbd/sec_ctx.c:314(set_sec_ctx)
+  setting sec ctx (0, 0) - sec_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.974130,  5] ../libcli/security/security_token.c:53(security_token_debug)
+  Security token: (NULL)
+[2016/04/14 18:08:36.974147,  5] auth/token_util.c:527(debug_unix_user_token)
+  UNIX token of user 0
+  Primary group is 0 and contains 0 supplementary groups
+[2016/04/14 18:08:36.974196,  5] smbd/uid.c:400(change_to_root_user)
+  change_to_root_user: now uid=(0,0) gid=(0,0)
+[2016/04/14 18:08:36.974422,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [PC NETWORK PROGRAM 1.0]
+[2016/04/14 18:08:36.974448,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [MICROSOFT NETWORKS 1.03]
+[2016/04/14 18:08:36.974465,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [MICROSOFT NETWORKS 3.0]
+[2016/04/14 18:08:36.974480,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [LANMAN1.0]
+[2016/04/14 18:08:36.974523,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [LM1.2X002]
+[2016/04/14 18:08:36.974543,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [DOS LANMAN2.1]
+[2016/04/14 18:08:36.974562,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [LANMAN2.1]
+[2016/04/14 18:08:36.974577,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [Samba]
+[2016/04/14 18:08:36.974592,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [NT LANMAN 1.0]
+[2016/04/14 18:08:36.974607,  3] smbd/negprot.c:598(reply_negprot)
+  Requested protocol [NT LM 0.12]
+[2016/04/14 18:08:36.974672,  3] smbd/negprot.c:419(reply_nt1)
+  using SPNEGO
+[2016/04/14 18:08:36.974690,  3] smbd/negprot.c:704(reply_negprot)
+  Selected protocol NT LANMAN 1.0
+[2016/04/14 18:08:36.974704,  5] smbd/negprot.c:711(reply_negprot)
+  negprot index=8
+[2016/04/14 18:08:36.974720,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.974728,  5] lib/util.c:342(show_msg)
+  size=181
+  smb_com=0x72
+  smb_rcls=0
+  smb_reh=0
+  smb_err=0
+  smb_flg=136
+  smb_flg2=51201
+  smb_tid=0
+  smb_pid=601
+  smb_uid=0
+  smb_mid=1
+  smt_wct=17
+  smb_vwv[ 0]=    8 (0x8)
+  smb_vwv[ 1]=12803 (0x3203)
+  smb_vwv[ 2]=  256 (0x100)
+  smb_vwv[ 3]= 1024 (0x400)
+  smb_vwv[ 4]=   65 (0x41)
+  smb_vwv[ 5]=    0 (0x0)
+  smb_vwv[ 6]=  256 (0x100)
+  smb_vwv[ 7]=23040 (0x5A00)
+  smb_vwv[ 8]=    2 (0x2)
+  smb_vwv[ 9]=64768 (0xFD00)
+  smb_vwv[10]=  243 (0xF3)
+  smb_vwv[11]=22656 (0x5880)
+  smb_vwv[12]=33274 (0x81FA)
+  smb_vwv[13]=11578 (0x2D3A)
+  smb_vwv[14]=53654 (0xD196)
+  smb_vwv[15]=58369 (0xE401)
+  smb_vwv[16]=  253 (0xFD)
+  smb_bcc=112
+[2016/04/14 18:08:36.975235,  3] smbd/process.c:1609(process_smb)
+  Transaction 1 of length 164 (0 toread)
+[2016/04/14 18:08:36.975271,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.975282,  5] lib/util.c:342(show_msg)
+  size=160
+  smb_com=0x73
+  smb_rcls=0
+  smb_reh=0
+  smb_err=0
+  smb_flg=8
+  smb_flg2=51201
+  smb_tid=65535
+  smb_pid=601
+  smb_uid=0
+  smb_mid=2
+  smt_wct=12
+  smb_vwv[ 0]=  255 (0xFF)
+  smb_vwv[ 1]=    0 (0x0)
+  smb_vwv[ 2]=65535 (0xFFFF)
+  smb_vwv[ 3]=    2 (0x2)
+  smb_vwv[ 4]=    1 (0x1)
+  smb_vwv[ 5]=    0 (0x0)
+  smb_vwv[ 6]=    0 (0x0)
+  smb_vwv[ 7]=   79 (0x4F)
+  smb_vwv[ 8]=    0 (0x0)
+  smb_vwv[ 9]=    0 (0x0)
+  smb_vwv[10]=53340 (0xD05C)
+  smb_vwv[11]=32768 (0x8000)
+  smb_bcc=101
+[2016/04/14 18:08:36.975431,  3] smbd/process.c:1414(switch_message)
+  switch message SMBsesssetupX (pid 602) conn 0x0
+[2016/04/14 18:08:36.975448,  4] smbd/sec_ctx.c:314(set_sec_ctx)
+  setting sec ctx (0, 0) - sec_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.975463,  5] ../libcli/security/security_token.c:53(security_token_debug)
+  Security token: (NULL)
+[2016/04/14 18:08:36.975477,  5] auth/token_util.c:527(debug_unix_user_token)
+  UNIX token of user 0
+  Primary group is 0 and contains 0 supplementary groups
+[2016/04/14 18:08:36.975537,  5] smbd/uid.c:400(change_to_root_user)
+  change_to_root_user: now uid=(0,0) gid=(0,0)
+[2016/04/14 18:08:36.975556,  3] smbd/sesssetup.c:1347(reply_sesssetup_and_X)
+  wct=12 flg2=0xc801
+[2016/04/14 18:08:36.975574,  3] smbd/sesssetup.c:1074(reply_sesssetup_and_X_spnego)
+  Doing spnego session setup
+[2016/04/14 18:08:36.975591,  3] smbd/sesssetup.c:1116(reply_sesssetup_and_X_spnego)
+  NativeOS=[Unix] NativeLanMan=[Samba] PrimaryDomain=[]
+[2016/04/14 18:08:36.975620,  5] smbd/sesssetup.c:609(parse_spnego_mechanisms)
+  parse_spnego_mechanisms: Got OID 1.3.6.1.4.1.311.2.2.10
+[2016/04/14 18:08:36.975644,  3] smbd/sesssetup.c:662(reply_spnego_negotiate)
+  reply_spnego_negotiate: Got secblob of size 45
+[2016/04/14 18:08:36.975772,  5] auth/auth.c:529(make_auth_context_subsystem)
+  Making default auth method list for security=ADS
+[2016/04/14 18:08:36.975793,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend sam
+[2016/04/14 18:08:36.975809,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'sam'
+[2016/04/14 18:08:36.975822,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend sam_ignoredomain
+[2016/04/14 18:08:36.975836,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'sam_ignoredomain'
+[2016/04/14 18:08:36.975850,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend unix
+[2016/04/14 18:08:36.975864,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'unix'
+[2016/04/14 18:08:36.975878,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend winbind
+[2016/04/14 18:08:36.975891,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'winbind'
+[2016/04/14 18:08:36.975904,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend wbc
+[2016/04/14 18:08:36.975918,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'wbc'
+[2016/04/14 18:08:36.975931,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend smbserver
+[2016/04/14 18:08:36.975945,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'smbserver'
+[2016/04/14 18:08:36.975959,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend trustdomain
+[2016/04/14 18:08:36.975973,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'trustdomain'
+[2016/04/14 18:08:36.975986,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend ntdomain
+[2016/04/14 18:08:36.975999,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'ntdomain'
+[2016/04/14 18:08:36.976037,  5] auth/auth.c:48(smb_register_auth)
+  Attempting to register auth backend guest
+[2016/04/14 18:08:36.976054,  5] auth/auth.c:60(smb_register_auth)
+  Successfully added auth method 'guest'
+[2016/04/14 18:08:36.976068,  5] auth/auth.c:396(load_auth_module)
+  load_auth_module: Attempting to find an auth method to match guest
+[2016/04/14 18:08:36.976082,  5] auth/auth.c:421(load_auth_module)
+  load_auth_module: auth method guest has a valid init
+[2016/04/14 18:08:36.976096,  5] auth/auth.c:396(load_auth_module)
+  load_auth_module: Attempting to find an auth method to match sam
+[2016/04/14 18:08:36.976110,  5] auth/auth.c:421(load_auth_module)
+  load_auth_module: auth method sam has a valid init
+[2016/04/14 18:08:36.976124,  5] auth/auth.c:396(load_auth_module)
+  load_auth_module: Attempting to find an auth method to match winbind:ntdomain
+[2016/04/14 18:08:36.976138,  5] auth/auth.c:396(load_auth_module)
+  load_auth_module: Attempting to find an auth method to match ntdomain
+[2016/04/14 18:08:36.976152,  5] auth/auth.c:421(load_auth_module)
+  load_auth_module: auth method ntdomain has a valid init
+[2016/04/14 18:08:36.976165,  5] auth/auth.c:421(load_auth_module)
+  load_auth_module: auth method winbind has a valid init
+[2016/04/14 18:08:36.976188,  3] ../libcli/auth/ntlmssp.c:34(debug_ntlmssp_flags)
+  Got NTLMSSP neg_flags=0x60088215
+    NTLMSSP_NEGOTIATE_UNICODE
+    NTLMSSP_REQUEST_TARGET
+    NTLMSSP_NEGOTIATE_SIGN
+    NTLMSSP_NEGOTIATE_NTLM
+    NTLMSSP_NEGOTIATE_ALWAYS_SIGN
+    NTLMSSP_NEGOTIATE_NTLM2
+    NTLMSSP_NEGOTIATE_128
+    NTLMSSP_NEGOTIATE_KEY_EXCH
+[2016/04/14 18:08:36.976244,  5] auth/auth.c:99(get_ntlm_challenge)
+  auth_get_challenge: module guest did not want to specify a challenge
+[2016/04/14 18:08:36.976258,  5] auth/auth.c:99(get_ntlm_challenge)
+  auth_get_challenge: module sam did not want to specify a challenge
+[2016/04/14 18:08:36.976272,  5] auth/auth.c:99(get_ntlm_challenge)
+  auth_get_challenge: module winbind did not want to specify a challenge
+[2016/04/14 18:08:36.976299,  5] auth/auth.c:134(get_ntlm_challenge)
+  auth_context challenge created by random
+[2016/04/14 18:08:36.976316,  5] auth/auth.c:135(get_ntlm_challenge)
+  challenge is: 
+[2016/04/14 18:08:36.976329,  5] ../lib/util/util.c:415(dump_data)
+  [0000] F9 B7 DD 3F AB 6B 72 0A                            ...?.kr. 
+[2016/04/14 18:08:36.976369,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.976378,  5] lib/util.c:342(show_msg)
+  size=302
+  smb_com=0x73
+  smb_rcls=22
+  smb_reh=0
+  smb_err=49152
+  smb_flg=136
+  smb_flg2=51203
+  smb_tid=65535
+  smb_pid=601
+  smb_uid=100
+  smb_mid=2
+  smt_wct=4
+  smb_vwv[ 0]=  255 (0xFF)
+  smb_vwv[ 1]=    0 (0x0)
+  smb_vwv[ 2]=    0 (0x0)
+  smb_vwv[ 3]=  195 (0xC3)
+  smb_bcc=259
+[2016/04/14 18:08:36.976766,  3] smbd/process.c:1609(process_smb)
+  Transaction 2 of length 398 (0 toread)
+[2016/04/14 18:08:36.976802,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.976812,  5] lib/util.c:342(show_msg)
+  size=394
+  smb_com=0x73
+  smb_rcls=0
+  smb_reh=0
+  smb_err=0
+  smb_flg=8
+  smb_flg2=51201
+  smb_tid=65535
+  smb_pid=601
+  smb_uid=100
+  smb_mid=3
+  smt_wct=12
+  smb_vwv[ 0]=  255 (0xFF)
+  smb_vwv[ 1]=    0 (0x0)
+  smb_vwv[ 2]=65535 (0xFFFF)
+  smb_vwv[ 3]=    2 (0x2)
+  smb_vwv[ 4]=    1 (0x1)
+  smb_vwv[ 5]=    0 (0x0)
+  smb_vwv[ 6]=    0 (0x0)
+  smb_vwv[ 7]=  312 (0x138)
+  smb_vwv[ 8]=    0 (0x0)
+  smb_vwv[ 9]=    0 (0x0)
+  smb_vwv[10]=53340 (0xD05C)
+  smb_vwv[11]=32768 (0x8000)
+  smb_bcc=335
+[2016/04/14 18:08:36.976951,  3] smbd/process.c:1414(switch_message)
+  switch message SMBsesssetupX (pid 602) conn 0x0
+[2016/04/14 18:08:36.976966,  4] smbd/sec_ctx.c:314(set_sec_ctx)
+  setting sec ctx (0, 0) - sec_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.976981,  5] ../libcli/security/security_token.c:53(security_token_debug)
+  Security token: (NULL)
+[2016/04/14 18:08:36.976994,  5] auth/token_util.c:527(debug_unix_user_token)
+  UNIX token of user 0
+  Primary group is 0 and contains 0 supplementary groups
+[2016/04/14 18:08:36.977018,  5] smbd/uid.c:400(change_to_root_user)
+  change_to_root_user: now uid=(0,0) gid=(0,0)
+[2016/04/14 18:08:36.977034,  3] smbd/sesssetup.c:1347(reply_sesssetup_and_X)
+  wct=12 flg2=0xc801
+[2016/04/14 18:08:36.977048,  3] smbd/sesssetup.c:1074(reply_sesssetup_and_X_spnego)
+  Doing spnego session setup
+[2016/04/14 18:08:36.977088,  3] smbd/sesssetup.c:1116(reply_sesssetup_and_X_spnego)
+  NativeOS=[Unix] NativeLanMan=[Samba] PrimaryDomain=[]
+[2016/04/14 18:08:36.977115,  3] ../libcli/auth/ntlmssp_server.c:348(ntlmssp_server_preauth)
+  Got user=[df3804] domain=[UOB] workstation=[RDSFDEVDAN] len1=24 len2=154
+[2016/04/14 18:08:36.977174,  5] auth/auth_util.c:111(make_user_info_map)
+  Mapping user [UOB]\[df3804] from workstation [RDSFDEVDAN]
+[2016/04/14 18:08:36.977246,  5] libsmb/trustdom_cache.c:165(trustdom_cache_fetch)
+  trusted domain UOB found (S-1-5-21-1117850145-1682116191-196506527)
+[2016/04/14 18:08:36.977267,  5] auth/user_info.c:59(make_user_info)
+  attempting to make a user_info for df3804 (df3804)
+[2016/04/14 18:08:36.977282,  5] auth/user_info.c:70(make_user_info)
+  making strings for df3804's user_info struct
+[2016/04/14 18:08:36.977296,  5] auth/user_info.c:87(make_user_info)
+  making blobs for df3804's user_info struct
+[2016/04/14 18:08:36.977310,  3] auth/auth.c:219(check_ntlm_password)
+  check_ntlm_password:  Checking password for unmapped user [UOB]\[df3804]@[RDSFDEVDAN] with the new password interface
+[2016/04/14 18:08:36.977325,  3] auth/auth.c:222(check_ntlm_password)
+  check_ntlm_password:  mapped user is: [UOB]\[df3804]@[RDSFDEVDAN]
+[2016/04/14 18:08:36.977340,  5] ../lib/util/util.c:415(dump_data)
+  [0000] F9 B7 DD 3F AB 6B 72 0A                            ...?.kr. 
+[2016/04/14 18:08:36.977366,  4] smbd/sec_ctx.c:214(push_sec_ctx)
+  push_sec_ctx(0, 0) : sec_ctx_stack_ndx = 1
+[2016/04/14 18:08:36.977383,  4] smbd/uid.c:460(push_conn_ctx)
+  push_conn_ctx(0) : conn_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.977397,  4] smbd/sec_ctx.c:314(set_sec_ctx)
+  setting sec ctx (0, 0) - sec_ctx_stack_ndx = 1
+[2016/04/14 18:08:36.977410,  5] ../libcli/security/security_token.c:53(security_token_debug)
+  Security token: (NULL)
+[2016/04/14 18:08:36.977432,  5] auth/token_util.c:527(debug_unix_user_token)
+  UNIX token of user 0
+  Primary group is 0 and contains 0 supplementary groups
+[2016/04/14 18:08:36.977474,  4] smbd/sec_ctx.c:422(pop_sec_ctx)
+  pop_sec_ctx (0, 0) - sec_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.977505,  5] libads/sitename_cache.c:105(sitename_fetch)
+  sitename_fetch: Returning sitename for ADS.BRIS.AC.UK: "MainPrecinct"
+[2016/04/14 18:08:36.977523,  4] libsmb/namequery_dc.c:76(ads_dc_name)
+  ads_dc_name: domain=UOB
+[2016/04/14 18:08:36.977545,  5] libads/sitename_cache.c:105(sitename_fetch)
+  sitename_fetch: Returning sitename for ADS.BRIS.AC.UK: "MainPrecinct"
+[2016/04/14 18:08:36.977572,  5] libsmb/namequery.c:191(saf_fetch)
+  saf_fetch: failed to find server for "ADS.BRIS.AC.UK" domain
+[2016/04/14 18:08:36.977590,  3] libsmb/namequery.c:2533(get_dc_list)
+  get_dc_list: preferred server list: ", *"
+[2016/04/14 18:08:36.977613,  5] libsmb/namecache.c:165(namecache_fetch)
+  name ADS.BRIS.AC.UK#1C found.
+[2016/04/14 18:08:36.977718,  4] libsmb/namequery.c:2670(get_dc_list)
+  get_dc_list: returning 6 ip addresses in an ordered list
+[2016/04/14 18:08:36.977736,  4] libsmb/namequery.c:2671(get_dc_list)
+  get_dc_list: 137.222.10.68:389 137.222.154.11:389 137.222.7.88:389 137.222.7.77:389 2001:630:e4:81::88:389 2001:630:e4:81::77:389 
+[2016/04/14 18:08:36.977760,  5] libads/ldap.c:213(ads_try_connect)
+  ads_try_connect: sending CLDAP request to 137.222.10.68 (realm: ADS.BRIS.AC.UK)
+[2016/04/14 18:08:36.978814,  3] libads/ldap.c:629(ads_connect)
+  Successfully contacted LDAP server 137.222.10.68
+[2016/04/14 18:08:36.978865,  5] libads/sitename_cache.c:105(sitename_fetch)
+  sitename_fetch: Returning sitename for ADS.BRIS.AC.UK: "MainPrecinct"
+[2016/04/14 18:08:36.978909,  5] libsmb/namequery.c:191(saf_fetch)
+  saf_fetch: failed to find server for "ADS.BRIS.AC.UK" domain
+[2016/04/14 18:08:36.978928,  3] libsmb/namequery.c:2533(get_dc_list)
+  get_dc_list: preferred server list: ", *"
+[2016/04/14 18:08:36.978950,  5] libsmb/namecache.c:165(namecache_fetch)
+  name ADS.BRIS.AC.UK#1C found.
+[2016/04/14 18:08:36.979053,  4] libsmb/namequery.c:2670(get_dc_list)
+  get_dc_list: returning 6 ip addresses in an ordered list
+[2016/04/14 18:08:36.979071,  4] libsmb/namequery.c:2671(get_dc_list)
+  get_dc_list: 137.222.10.68:389 137.222.154.11:389 137.222.7.88:389 137.222.7.77:389 2001:630:e4:81::88:389 2001:630:e4:81::77:389 
+[2016/04/14 18:08:36.979108,  5] libsmb/namequery.c:191(saf_fetch)
+  saf_fetch: failed to find server for "ADS.BRIS.AC.UK" domain
+[2016/04/14 18:08:36.979125,  3] libsmb/namequery.c:2533(get_dc_list)
+  get_dc_list: preferred server list: ", *"
+[2016/04/14 18:08:36.979144,  5] libsmb/namecache.c:165(namecache_fetch)
+  name ADS.BRIS.AC.UK#1C found.
+[2016/04/14 18:08:36.979251,  4] libsmb/namequery.c:2670(get_dc_list)
+  get_dc_list: returning 6 ip addresses in an ordered list
+[2016/04/14 18:08:36.979270,  4] libsmb/namequery.c:2671(get_dc_list)
+  get_dc_list: 137.222.10.68:389 137.222.154.11:389 137.222.7.88:389 137.222.7.77:389 2001:630:e4:81::88:389 2001:630:e4:81::77:389 
+[2016/04/14 18:08:36.979359,  5] libads/kerberos.c:933(create_local_private_krb5_conf_for_domain)
+  create_local_private_krb5_conf_for_domain: wrote file /var/lib/samba/smb_krb5/krb5.conf.UOB with realm ADS.BRIS.AC.UK KDC list = 	kdc = 137.222.10.68
+  	kdc = 137.222.154.11
+  	kdc = 137.222.7.88
+  	kdc = 137.222.7.77
+  	kdc = [2001:630:e4:81::88]
+  	kdc = [2001:630:e4:81::77]
+  	kdc = 137.222.154.11
+  	kdc = 137.222.7.88
+  	kdc = 137.222.7.77
+  
+[2016/04/14 18:08:36.979428,  4] libsmb/namequery_dc.c:146(ads_dc_name)
+  ads_dc_name: using server='UOB-DC10.ADS.BRIS.AC.UK' IP=137.222.10.68
+[2016/04/14 18:08:36.979548,  3] libsmb/cliconnect.c:3183(cli_start_connection)
+  Connecting to host=UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.979591,  3] lib/util_sock.c:766(open_socket_out_send)
+  Connecting to 137.222.10.68 at port 445
+[2016/04/14 18:08:36.980543,  5] lib/util_sock.c:165(print_socket_options)
+  Socket options:
+  	SO_KEEPALIVE = 0
+  	SO_REUSEADDR = 0
+  	SO_BROADCAST = 0
+  	TCP_NODELAY = 1
+  	TCP_KEEPCNT = 9
+  	TCP_KEEPIDLE = 7200
+  	TCP_KEEPINTVL = 75
+  	IPTOS_LOWDELAY = 0
+  	IPTOS_THROUGHPUT = 0
+  	SO_SNDBUF = 16384
+  	SO_RCVBUF = 87380
+  	SO_SNDLOWAT = 1
+  	SO_RCVLOWAT = 1
+  	SO_SNDTIMEO = 0
+  	SO_RCVTIMEO = 0
+  	TCP_QUICKACK = 1
+[2016/04/14 18:08:36.984471,  5] rpc_client/cli_pipe.c:1998(rpc_pipe_bind_send)
+  Bind RPC Pipe: host UOB-DC10.ADS.BRIS.AC.UK auth_type 0, auth_level 1
+[2016/04/14 18:08:36.984549,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.985623,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 52
+[2016/04/14 18:08:36.985714,  5] rpc_client/cli_pipe.c:1866(check_bind_response)
+  check_bind_response: accepted!
+[2016/04/14 18:08:36.985800,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.986797,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 20
+[2016/04/14 18:08:36.986949,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.988129,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 24
+[2016/04/14 18:08:36.988223,  5] rpc_client/cli_netlogon.c:148(rpccli_netlogon_setup_creds)
+  rpccli_netlogon_setup_creds: server UOB-DC10.ADS.BRIS.AC.UK credential chain established.
+[2016/04/14 18:08:36.988917,  5] rpc_client/cli_pipe.c:1998(rpc_pipe_bind_send)
+  Bind RPC Pipe: host UOB-DC10.ADS.BRIS.AC.UK auth_type 68, auth_level 6
+[2016/04/14 18:08:36.988975,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.989878,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 72
+[2016/04/14 18:08:36.989965,  5] rpc_client/cli_pipe.c:1866(check_bind_response)
+  check_bind_response: accepted!
+[2016/04/14 18:08:36.989986,  5] ../libcli/auth/credentials.c:108(netlogon_creds_step)
+  	seed        ab64701b:801766c9
+[2016/04/14 18:08:36.990006,  5] ../libcli/auth/credentials.c:113(netlogon_creds_step)
+  	seed+time   0273ce31:801766c9
+[2016/04/14 18:08:36.990041,  5] ../libcli/auth/credentials.c:118(netlogon_creds_step)
+  	CLIENT      4011203f:2c8963cc
+[2016/04/14 18:08:36.990063,  5] ../libcli/auth/credentials.c:124(netlogon_creds_step)
+  	seed+time+1 0273ce32:801766c9
+[2016/04/14 18:08:36.990101,  5] ../libcli/auth/credentials.c:129(netlogon_creds_step)
+  	SERVER      541c4637:e41545cb
+[2016/04/14 18:08:36.990173,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.991101,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 104
+[2016/04/14 18:08:36.991873,  5] ../libcli/auth/credentials.c:108(netlogon_creds_step)
+  	seed        ab64701b:801766c9
+[2016/04/14 18:08:36.991910,  5] ../libcli/auth/credentials.c:113(netlogon_creds_step)
+  	seed+time   0273ce31:801766c9
+[2016/04/14 18:08:36.991947,  5] ../libcli/auth/credentials.c:118(netlogon_creds_step)
+  	CLIENT      4011203f:2c8963cc
+[2016/04/14 18:08:36.991961,  5] ../libcli/auth/credentials.c:124(netlogon_creds_step)
+  	seed+time+1 0273ce32:801766c9
+[2016/04/14 18:08:36.991994,  5] ../libcli/auth/credentials.c:129(netlogon_creds_step)
+  	SERVER      541c4637:e41545cb
+[2016/04/14 18:08:36.992064,  5] rpc_client/cli_pipe.c:842(rpc_api_pipe_send)
+  rpc_api_pipe: host UOB-DC10.ADS.BRIS.AC.UK
+[2016/04/14 18:08:36.992946,  5] rpc_client/cli_pipe.c:98(rpc_read_send)
+  rpc_read_send: data_to_read: 104
+[2016/04/14 18:08:36.993052,  2] ../libcli/auth/credentials.c:289(netlogon_creds_client_check)
+  credentials check failed
+[2016/04/14 18:08:36.993071,  0] rpc_client/cli_netlogon.c:459(rpccli_netlogon_sam_network_logon)
+  rpccli_netlogon_sam_network_logon: credentials chain check failed
+[2016/04/14 18:08:36.993178,  0] auth/auth_domain.c:331(domain_client_validate)
+  domain_client_validate: unable to validate password for user df3804 in domain UOB to Domain controller UOB-DC10.ADS.BRIS.AC.UK. Error was NT_STATUS_ACCESS_DENIED.
+[2016/04/14 18:08:36.994617,  5] auth/auth.c:281(check_ntlm_password)
+  check_ntlm_password: winbind authentication for user [df3804] FAILED with error NT_STATUS_ACCESS_DENIED
+[2016/04/14 18:08:36.994830,  2] auth/auth.c:330(check_ntlm_password)
+  check_ntlm_password:  Authentication for user [df3804] -> [df3804] FAILED with error NT_STATUS_ACCESS_DENIED
+[2016/04/14 18:08:36.994864,  3] smbd/error.c:81(error_packet_set)
+  error packet at smbd/sesssetup.c(124) cmd=115 (SMBsesssetupX) NT_STATUS_ACCESS_DENIED
+[2016/04/14 18:08:36.994887,  5] lib/util.c:332(show_msg)
+[2016/04/14 18:08:36.994896,  5] lib/util.c:342(show_msg)
+  size=35
+  smb_com=0x73
+  smb_rcls=34
+  smb_reh=0
+  smb_err=49152
+  smb_flg=136
+  smb_flg2=51203
+  smb_tid=65535
+  smb_pid=601
+  smb_uid=100
+  smb_mid=3
+  smt_wct=0
+  smb_bcc=0
+[2016/04/14 18:08:36.995873,  5] lib/util_sock.c:319(read_fd_with_timeout)
+  read_fd_with_timeout: blocking read. EOF from client.
+[2016/04/14 18:08:36.996886,  5] smbd/process.c:457(receive_smb_talloc)
+  receive_smb_raw_talloc failed for client 127.0.0.1 read error = NT_STATUS_END_OF_FILE.
+[2016/04/14 18:08:36.996917,  4] smbd/sec_ctx.c:314(set_sec_ctx)
+  setting sec ctx (0, 0) - sec_ctx_stack_ndx = 0
+[2016/04/14 18:08:36.996932,  5] ../libcli/security/security_token.c:53(security_token_debug)
+  Security token: (NULL)
+[2016/04/14 18:08:36.996946,  5] auth/token_util.c:527(debug_unix_user_token)
+  UNIX token of user 0
+  Primary group is 0 and contains 0 supplementary groups
+[2016/04/14 18:08:36.997006,  5] smbd/uid.c:400(change_to_root_user)
+  change_to_root_user: now uid=(0,0) gid=(0,0)
+[2016/04/14 18:08:36.997153,  3] smbd/server_exit.c:181(exit_server_common)
+  Server exit (failed to receive smb request)

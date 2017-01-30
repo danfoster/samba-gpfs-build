@@ -4,11 +4,11 @@
 
 GPFS_BASE_BASE_RPM="gpfs.base-3.5.0-3.x86_64.rpm"
 GPFS_GPL_BASE_RPM="gpfs.gpl-3.5.0-3.noarch.rpm"
-GPFS_GPL_PTF_RPM="gpfs.gpl-3.5.0-21.noarch.rpm"
+GPFS_GPL_PTF_RPM="gpfs.gpl-3.5.0-24.noarch.rpm"
 
 ## Samba Source Package. Change to point to the version you want to build
 
-SAMBA_SRPM="http://ftp.redhat.com/redhat/linux/enterprise/5Server/en/os/SRPMS/samba3x-3.6.23-9.el5_11.src.rpm"
+SAMBA_SRPM="http://ftp.redhat.com/redhat/linux/enterprise/5Server/en/os/SRPMS/samba3x-3.6.23-12.el5_11.src.rpm"
 
 ## Redhats RPM Signing key. You are unlikely to need to change this.
 
@@ -20,16 +20,16 @@ EOF
 
 mkdir -p /vagrant/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-yum install -y yum-utils rpm-build
+yum install -y yum-utils rpm-build shadow-utils
 sed -i'' 's/gpgcheck=1/gpgcheck=0/' /etc/yum.conf
 
 # Download gpfs.base and gpfs.gpl
-yum localinstall /vagrant/${GPFS_BASE_BASE_RPM} /vagrant/${GPFS_GPL_BASE_RPM}
+yum localinstall -y /vagrant/${GPFS_BASE_BASE_RPM} /vagrant/${GPFS_GPL_BASE_RPM}
 # Download gpfs.gpl PTF update
 rpm -U /vagrant/${GPFS_GPL_PTF_RPM}
 
-useradd mockbuild
-groupadd mockbuild
+/usr/sbin/useradd mockbuild
+/usr/sbin/groupadd mockbuild
 
 cd /tmp
 wget ${SAMBA_SRPM} -O samba.src.rpm -nv
@@ -39,5 +39,4 @@ rpm --import gpg.key
 yum-builddep -y samba.src.rpm
 yum install -y ctdb-devel gcc
 rpmbuild --rebuild samba.src.rpm
-
 
